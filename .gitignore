@@ -1,0 +1,12 @@
+node_modules/
+out/
+dist/
+.DS_Store
+data/
+uploads/
+outputs/
+logs/
+exports/
+backups/
+*.db
+*.db-journal

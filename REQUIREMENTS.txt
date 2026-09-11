@@ -1,0 +1,79 @@
+REQUIREMENTS - BountyVault
+==========================
+
+SYSTEM REQUIREMENTS
+-------------------
+OS:            Windows 10 or Windows 11 (64-bit)
+RAM:           4 GB minimum (8 GB recommended)
+Disk Space:    500 MB for application + space for database and exports
+Display:       1200x700 minimum resolution
+
+SOFTWARE REQUIREMENTS
+---------------------
+Node.js:       v18.0.0 or higher
+               Download: https://nodejs.org/
+
+npm:           v9.0.0 or higher (comes with Node.js)
+
+WSL2 (Optional - for workflow automation only):
+               Windows Subsystem for Linux 2
+               Enable by running in PowerShell (Admin):
+                 wsl --install
+
+Kali Linux (Optional - for workflow automation):
+               Install from Microsoft Store or run:
+                 wsl --install -d kali-linux
+
+For workflow automation, these tools should be installed inside Kali:
+               - subfinder (subdomain enumeration)
+               - httpx (HTTP probing)
+               - nuclei (vulnerability scanning)
+               - katana (web crawling)
+               - waybackurls (Wayback Machine URLs)
+               - dirsearch (directory brute-forcing)
+               - dalfox (XSS scanning)
+               - sqlmap (SQL injection)
+               - gf (pattern matching)
+               - uro (URL filtering)
+
+GETTING STARTED
+---------------
+1. Install Node.js from https://nodejs.org/
+2. Open terminal/command prompt
+3. Navigate to the BountyVault folder:
+     cd "D:\SOCIAL MEDIA\linkedin\GITHUB\BountyVault"
+4. Install dependencies:
+     npm install
+5. Start the application:
+     npm run dev
+
+BUILD REQUIREMENTS (for creating .exe)
+--------------------------------------
+- electron-builder (installed via npm)
+- Windows target only (portable .exe)
+
+To build:
+     npm run build
+     npm run package
+
+Output: dist/BountyVault.exe
+
+TROUBLESHOOTING
+---------------
+Q: "npm run dev" shows errors
+A: Delete node_modules/ and run "npm install" again
+
+Q: App doesn't start
+A: Make sure Node.js v18+ is installed. Check with: node --version
+
+Q: WSL workflows fail
+A: Ensure WSL2 is enabled and Kali Linux is installed.
+   Check with: wsl --list --verbose
+
+Q: Database errors
+A: The app auto-creates the database on first run.
+   Delete %APPDATA%\bountyvault-clean\ to start fresh.
+
+Q: Port already in use
+A: Another electron-vite process may be running.
+   Close it or restart your computer.

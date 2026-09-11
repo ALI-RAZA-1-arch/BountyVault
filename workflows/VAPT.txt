@@ -1,0 +1,41 @@
+# Basic Web Recon Workflow
+# <example.com> is replaced by the target you enter when running.
+# Each line "N. command" is one step. Outputs are saved in /home/kali/bounty/<target>/.
+
+1. subfinder -d <example.com> -all -recursive -silent > subdomains.txt
+
+2. httpx -l subdomains.txt -ports 80,443,8080,8000,8888 -threads 200 -silent > sub_alive.txt
+
+3. nuclei -l sub_alive.txt -tags cves,cve,exposure,osint,tech,takeover -severity medium,high,critical -c 50 -rl 100 -silent -o nuclei_subs.txt
+
+4. katana -list sub_alive.txt -d 5 -jc -c 50 -p 10 -silent | sort -u | uro > katana_urls.txt
+
+5. cat sub_alive.txt | waybackurls | sort -u | uro > wayback_urls.txt
+
+6. cat katana_urls.txt wayback_urls.txt | sort -u | uro > urls.txt
+
+7. httpx -l urls.txt -mc 200,301,302,403 -threads 200 -silent > alive_urls.txt
+
+8. grep -Ei '\.js(\?|$)' alive_urls.txt | sort -u > js.txt
+
+9. nuclei -l js.txt -t http/exposures/ -tags token,key -c 50 -rl 100 -silent -o js_secrets.txt
+
+10. grep -Ei '\.(txt|log|cache|secret|db|backup|yml|yaml|json|gz|rar|zip)(\?|$)|_config' alive_urls.txt | sort -u > juicy_files.txt
+
+11. while read -r url; do dirsearch -u "$url" -e conf,config,bak,backup,old,db,sql,asp,aspx,py,rb,php,cache,cgi,csv,html,inc,jar,js,json,jsp,lock,log,txt,xml,zip -t 50 --quiet; done < sub_alive.txt
+
+12. cat alive_urls.txt | gf xss | uro > xss_params.txt
+
+13. dalfox file xss_params.txt --worker 50 --silence -o xss_findings.txt
+
+14. cat alive_urls.txt | gf lfi | uro > lfi_params.txt
+
+15. nuclei -l lfi_params.txt -tags lfi -c 50 -rl 100 -silent -o lfi_findings.txt
+
+16. cat alive_urls.txt | gf redirect | uro > redirect_params.txt
+
+17. nuclei -l redirect_params.txt -tags redirect -dast -c 50 -rl 100 -silent -o redirect_findings.txt
+
+18. cat alive_urls.txt | gf sqli | uro > sqli_params.txt
+
+19. sqlmap -m sqli_params.txt --batch --random-agent --level 2 --risk 1 --dbs --threads 10 | tee sqli_sqlmap_findings.txt
